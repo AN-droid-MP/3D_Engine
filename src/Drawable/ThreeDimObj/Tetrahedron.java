@@ -26,6 +26,7 @@ public class Tetrahedron extends Shape {
                 new Vector3(r, -h / 2, -r),
                 new Vector3(0, -h / 2, r)
         };
+        rotate(rotation.x, rotation.y, rotation.z);
     }
 
     @Override

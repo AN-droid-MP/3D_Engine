@@ -45,6 +45,7 @@ public class Sphere extends Shape {
                 vertices[index++] = new Vector3(x, y, z);
             }
         }
+        rotate(rotation.x, rotation.y, rotation.z);
     }
 
     @Override

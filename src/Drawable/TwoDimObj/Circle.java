@@ -25,6 +25,7 @@ public class Circle extends Shape {
             double angle = 2 * Math.PI * i / segments;
             vertices[i] = new Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0);
         }
+        rotate(rotation.x, rotation.y, rotation.z);
     }
 
     @Override

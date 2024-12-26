@@ -27,8 +27,8 @@ public class Main {
         scene.addShape(new Parallelepiped(new Vector3(10, 15, 60), Color.CYAN, 15, 15, 15, new Vector3(0, 0, 0)));
         scene.addShape(new Sphere(new Vector3(-10, 10, 50), Color.MAGENTA, 10, 20, 20, new Vector3(0, 0, 0)));
         scene.addShape(new Circle(new Vector3(-100, 10, 50), Color.ORANGE, 10, 20, new Vector3(0, 0, 0)));
-        scene.addShape(new Triangle(new Vector3(100, 100, 50), Color.PINK, triangleVertices, new Vector3(0, 0, 0)));
-        scene.addShape(new Tetrahedron(new Vector3(50, 100, 200), Color.YELLOW, 200, new Vector3(0, 0, 0)));
+        scene.addShape(new Triangle(new Vector3(100, 0, 50), Color.PINK, triangleVertices, new Vector3(0, 0, 0)));
+        scene.addShape(new Tetrahedron(new Vector3(50, 0, 100), Color.YELLOW, 20, new Vector3(0, 0, 0)));
 
         scene.addShape(new Rectangle(new Vector3(0, 100, 50), Color.GREEN, 50, 50, new Vector3(90, 0, 0)));
         scene.addShape(new Rectangle(new Vector3(0, 0, 50), Color.LIGHT_GRAY, 50, 50, new Vector3(90, 0, 0)));

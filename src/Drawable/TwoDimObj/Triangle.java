@@ -18,6 +18,7 @@ public class Triangle extends Shape {
             throw new IllegalArgumentException("Triangle must have exactly 3 vertices");
         }
         this.vertices = vertices;
+        rotate(rotation.x, rotation.y, rotation.z);
     }
 
     @Override
