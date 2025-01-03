@@ -93,6 +93,13 @@ public class Vector3 {
                 .add(axis.multiply(axis.dot(this) * (1 - cosTheta)));
     }
 
+    public double distanceTo(Vector3 other) {
+        double dx = this.x - other.x;
+        double dy = this.y - other.y;
+        double dz = this.z - other.z;
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
     @Override
     public String toString() {
         return String.format("Vector3(%.2f, %.2f, %.2f)", x, y, z);

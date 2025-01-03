@@ -48,12 +48,13 @@ public class Scene {
             case KeyEvent.VK_SPACE -> delta = new Vector3(0, moveSpeed, 0); // Вверх
             case KeyEvent.VK_SHIFT -> delta = new Vector3(0, -moveSpeed, 0); // Вниз
 
-            case KeyEvent.VK_UP -> camera.rotate(-rotateSpeed, 0, 0);   // Вверх
-            case KeyEvent.VK_DOWN -> camera.rotate(rotateSpeed, 0, 0); // Вниз
-            case KeyEvent.VK_LEFT -> camera.rotate(0, -rotateSpeed, 0); // Влево
-            case KeyEvent.VK_RIGHT -> camera.rotate(0, rotateSpeed, 0); // Вправо
+            // Вращение камеры
+            case KeyEvent.VK_UP -> camera.rotate(-rotateSpeed, 0, 0);   // Наклон вверх
+            case KeyEvent.VK_DOWN -> camera.rotate(rotateSpeed, 0, 0); // Наклон вниз
+            case KeyEvent.VK_LEFT -> camera.rotate(0, -rotateSpeed, 0); // Поворот влево
+            case KeyEvent.VK_RIGHT -> camera.rotate(0, rotateSpeed, 0); // Поворот вправо
             case KeyEvent.VK_Q -> camera.rotate(0, 0, -rotateSpeed);   // Крен влево
-            case KeyEvent.VK_E -> camera.rotate(0, 0, rotateSpeed);    // Крен вправо
+            case KeyEvent.VK_E -> camera.rotate(0, 0, rotateSpeed);   // Крен вправо
         }
 
         camera.moveRelative(delta);

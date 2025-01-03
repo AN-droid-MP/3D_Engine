@@ -1,6 +1,8 @@
 import Drawable.Matrix4x4;
 import Drawable.Vector3;
 
+import java.util.List;
+
 public class Camera {
     private Vector3 position;
     private Matrix4x4 orientation; // Матрица ориентации камеры
@@ -33,25 +35,30 @@ public class Camera {
     }
 
     public void moveRelative(Vector3 delta) {
-        position = position.add(
-                getForward().multiply(delta.z)
-                        .add(getRight().multiply(delta.x))
-                        .add(getUp().multiply(delta.y))
-        );
+        Vector3 globalDelta = orientation.transform(delta);
+        position = position.add(globalDelta);
     }
 
     public void rotate(double pitch, double yaw, double roll) {
-        // Матрицы вращения
-        Matrix4x4 pitchMatrix = Matrix4x4.rotation(getRight(), pitch);   // Вверх/вниз
-        Matrix4x4 yawMatrix = Matrix4x4.rotation(getUp(), yaw);         // Влево/вправо
-        Matrix4x4 rollMatrix = Matrix4x4.rotation(getForward(), roll);  // Крен
+        Matrix4x4 pitchMatrix = Matrix4x4.rotation(new Vector3(1, 0, 0), pitch);
+        Matrix4x4 yawMatrix = Matrix4x4.rotation(new Vector3(0, 1, 0), yaw);
+        Matrix4x4 rollMatrix = Matrix4x4.rotation(new Vector3(0, 0, 1), roll);
 
-        // Обновление ориентации камеры
-        orientation = pitchMatrix.multiply(yawMatrix).multiply(rollMatrix).multiply(orientation);
+        orientation = yawMatrix.multiply(pitchMatrix).multiply(rollMatrix).multiply(orientation);
     }
 
     public String getOrientation() {
         return String.format("Position: %s\nForward: %s\nUp: %s\nRight: %s",
                 position, getForward(), getUp(), getRight());
     }
+
+    public void moveThroughPath(List<Vector3> path, double speed) {
+        for (Vector3 target : path) {
+            while (position.distanceTo(target) > 0.1) {
+                Vector3 direction = target.subtract(position).normalize();
+                position = position.add(direction.multiply(speed));
+            }
+        }
+    }
+
 }
