@@ -9,39 +9,32 @@ public class Vector3 {
         this.z = z;
     }
 
-    // Добавление вектора
     public Vector3 add(Vector3 other) {
         return new Vector3(x + other.x, y + other.y, z + other.z);
     }
 
-    // Вычитание вектора
     public Vector3 subtract(Vector3 other) {
         return new Vector3(x - other.x, y - other.y, z - other.z);
     }
 
-    // Умножение на скаляр
     public Vector3 multiply(double scalar) {
         return new Vector3(x * scalar, y * scalar, z * scalar);
     }
 
-    // Нормализация вектора
     public Vector3 normalize() {
         double length = magnitude();
         if (length == 0) return new Vector3(0, 0, 0);
         return new Vector3(x / length, y / length, z / length);
     }
 
-    // Длина вектора
     public double magnitude() {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
-    // Скалярное произведение
     public double dot(Vector3 other) {
         return x * other.x + y * other.y + z * other.z;
     }
 
-    // Векторное произведение
     public Vector3 cross(Vector3 other) {
         return new Vector3(
                 y * other.z - z * other.y,
@@ -50,7 +43,6 @@ public class Vector3 {
         );
     }
 
-    // Вращение вокруг оси X
     public Vector3 rotateX(double angle) {
         double rad = Math.toRadians(angle);
         double newY = y * Math.cos(rad) - z * Math.sin(rad);
@@ -58,7 +50,6 @@ public class Vector3 {
         return new Vector3(x, newY, newZ);
     }
 
-    // Вращение вокруг оси Y
     public Vector3 rotateY(double angle) {
         double rad = Math.toRadians(angle);
         double newX = x * Math.cos(rad) + z * Math.sin(rad);
@@ -66,7 +57,6 @@ public class Vector3 {
         return new Vector3(newX, y, newZ);
     }
 
-    // Вращение вокруг оси Z
     public Vector3 rotateZ(double angle) {
         double rad = Math.toRadians(angle);
         double newX = x * Math.cos(rad) - y * Math.sin(rad);
@@ -98,6 +88,15 @@ public class Vector3 {
         double dy = this.y - other.y;
         double dz = this.z - other.z;
         return Math.sqrt(dx * dx + dy * dy + dz * dz);
+    }
+
+    public double getComponent(int index) {
+        return switch (index) {
+            case 0 -> x;
+            case 1 -> y;
+            case 2 -> z;
+            default -> throw new IllegalArgumentException("Index out of bounds: " + index);
+        };
     }
 
     @Override

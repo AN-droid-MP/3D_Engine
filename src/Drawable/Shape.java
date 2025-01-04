@@ -1,7 +1,6 @@
 package Drawable;
 
 import java.awt.*;
-import java.util.List;
 
 public abstract class Shape {
     protected Vector3 position;
@@ -14,14 +13,14 @@ public abstract class Shape {
         this.rotation = rotation;
     }
 
-    public abstract void draw(Graphics2D g, double fov, int screenWidth, int screenHeight,
-                              Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight);
-
-    public abstract Vector3[] getTransformedVertices(Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight);
-
-    public abstract List<Face> getFaces(Vector3[] transformedVertices);
-
     public void rotate(double angleX, double angleY, double angleZ) {
         rotation = rotation.add(new Vector3(angleX, angleY, angleZ));
     }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public abstract double intersect(Vector3 origin, Vector3 direction);
+
 }

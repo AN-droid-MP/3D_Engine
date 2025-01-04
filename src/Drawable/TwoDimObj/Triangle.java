@@ -1,12 +1,9 @@
 package Drawable.TwoDimObj;
 
-import Drawable.Face;
-import Drawable.Vector3;
 import Drawable.Shape;
+import Drawable.Vector3;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class Triangle extends Shape {
@@ -22,56 +19,28 @@ public class Triangle extends Shape {
     }
 
     @Override
-    public Vector3[] getTransformedVertices(Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight) {
-        Vector3[] transformedVertices = new Vector3[vertices.length];
-        for (int i = 0; i < vertices.length; i++) {
-            transformedVertices[i] = vertices[i]
-                    .add(position)
-                    .transform(cameraPosition, cameraForward, cameraUp, cameraRight);
-        }
-        return transformedVertices;
-    }
+    public double intersect(Vector3 origin, Vector3 direction) {
+        Vector3 edge1 = vertices[1].subtract(vertices[0]);
+        Vector3 edge2 = vertices[2].subtract(vertices[0]);
+        Vector3 h = direction.cross(edge2);
+        double a = edge1.dot(h);
 
-    @Override
-    public List<Face> getFaces(Vector3[] transformedVertices) {
-        List<Face> faces = new ArrayList<>();
-        int[] indices = {0, 1, 2};
-        double averageZ = (transformedVertices[0].z + transformedVertices[1].z + transformedVertices[2].z) / 3.0;
+        if (Math.abs(a) < 1e-6) return -1;
 
-        faces.add(new Face(indices, averageZ, color, transformedVertices));
-        return faces;
-    }
+        double f = 1.0 / a;
+        Vector3 s = origin.subtract(vertices[0]);
+        double u = f * s.dot(h);
 
-    @Override
-    public void draw(Graphics2D g, double fov, int screenWidth, int screenHeight,
-                     Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight) {
-        Vector3[] transformedVertices = getTransformedVertices(cameraPosition, cameraForward, cameraUp, cameraRight);
+        if (u < 0.0 || u > 1.0) return -1;
 
-        List<Face> faces = getFaces(transformedVertices);
+        Vector3 q = s.cross(edge1);
+        double v = f * direction.dot(q);
 
-        for (Face face : faces) {
-            drawFace(g, face, fov, screenWidth, screenHeight);
-        }
-    }
+        if (v < 0.0 || u + v > 1.0) return -1;
 
-    private void drawFace(Graphics2D g, Face face, double fov, int screenWidth, int screenHeight) {
-        int[] xPoints = new int[face.vertexIndices.length];
-        int[] yPoints = new int[face.vertexIndices.length];
+        double t = f * edge2.dot(q);
 
-        for (int i = 0; i < face.vertexIndices.length; i++) {
-            Vector3 vertex = face.transformedVertices[face.vertexIndices[i]];
-
-            if (vertex.z <= 0) return;
-
-            double scale = fov / vertex.z;
-            xPoints[i] = (int) ((vertex.x * scale) + screenWidth / 2);
-            yPoints[i] = (int) ((-vertex.y * scale) + screenHeight / 2);
-        }
-
-        Polygon polygon = new Polygon(xPoints, yPoints, face.vertexIndices.length);
-        g.setColor(face.color);
-        g.fillPolygon(polygon);
-        g.drawPolygon(polygon);
+        return (t > 1e-6) ? t : -1;
     }
 
 

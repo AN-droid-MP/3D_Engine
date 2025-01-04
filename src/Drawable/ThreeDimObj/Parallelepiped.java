@@ -1,13 +1,9 @@
 package Drawable.ThreeDimObj;
 
-import Drawable.Face;
-import Drawable.Vector3;
 import Drawable.Shape;
+import Drawable.Vector3;
 
 import java.awt.*;
-import java.awt.geom.Path2D;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Parallelepiped extends Shape {
     public double width, height, depth;
@@ -36,87 +32,31 @@ public class Parallelepiped extends Shape {
     }
 
     @Override
-    public void draw(Graphics2D g, double fov, int screenWidth, int screenHeight,
-                     Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight) {
-        Vector3[] transformedCorners = new Vector3[corners.length];
-        for (int i = 0; i < corners.length; i++) {
-            transformedCorners[i] = corners[i]
-                    .add(position)
-                    .transform(cameraPosition, cameraForward, cameraUp, cameraRight);
-        }
+    public double intersect(Vector3 origin, Vector3 direction) {
+        double tMin = Double.NEGATIVE_INFINITY;
+        double tMax = Double.POSITIVE_INFINITY;
 
-        int[][] faces = {
-                {0, 1, 2, 3}, // Front
-                {4, 5, 6, 7}, // Back
-                {0, 1, 5, 4}, // Bottom
-                {2, 3, 7, 6}, // Top
-                {0, 3, 7, 4}, // Left
-                {1, 2, 6, 5}  // Right
-        };
+        Vector3 min = position.subtract(new Vector3(width / 2, height / 2, depth / 2));
+        Vector3 max = position.add(new Vector3(width / 2, height / 2, depth / 2));
 
-        g.setColor(color);
-        for (int[] face : faces) {
-            drawFace(g, transformedCorners, face, fov, screenWidth, screenHeight);
-        }
-    }
+        for (int i = 0; i < 3; i++) {
+            double invD = 1.0 / direction.getComponent(i);
+            double t0 = (min.getComponent(i) - origin.getComponent(i)) * invD;
+            double t1 = (max.getComponent(i) - origin.getComponent(i)) * invD;
 
-    private void drawFace(Graphics2D g, Vector3[] corners, int[] face, double fov, int screenWidth, int screenHeight) {
-        int[] xPoints = new int[face.length];
-        int[] yPoints = new int[face.length];
-        for (int i = 0; i < face.length; i++) {
-            Vector3 vertex = corners[face[i]];
-            if (vertex.z <= 0) return;
-            double scale = fov / vertex.z;
-            xPoints[i] = (int) ((vertex.x * scale) + screenWidth / 2);
-            yPoints[i] = (int) ((-vertex.y * scale) + screenHeight / 2);
-        }
-
-        Path2D path = new Path2D.Double();
-        path.moveTo(xPoints[0], yPoints[0]);
-        for (int i = 1; i < xPoints.length; i++) {
-            path.lineTo(xPoints[i], yPoints[i]);
-        }
-        path.closePath();
-        g.fill(path);
-        g.draw(path);
-    }
-
-    @Override
-    public List<Face> getFaces(Vector3[] transformedVertices) {
-        int[][] faceIndices = {
-                {0, 1, 2, 3}, // Front
-                {4, 5, 6, 7}, // Back
-                {0, 1, 5, 4}, // Bottom
-                {2, 3, 7, 6}, // Top
-                {0, 3, 7, 4}, // Left
-                {1, 2, 6, 5}  // Right
-        };
-
-        List<Face> faces = new ArrayList<>();
-        for (int[] indices : faceIndices) {
-            double averageZ = 0;
-            for (int index : indices) {
-                averageZ += transformedVertices[index].z;
+            if (invD < 0) {
+                double temp = t0;
+                t0 = t1;
+                t1 = temp;
             }
-            averageZ /= indices.length;
 
-            faces.add(new Face(indices, averageZ, color, transformedVertices));
+            tMin = Math.max(tMin, t0);
+            tMax = Math.min(tMax, t1);
+
+            if (tMax <= tMin) return -1;
         }
 
-        return faces;
-    }
-
-
-
-    @Override
-    public Vector3[] getTransformedVertices(Vector3 cameraPosition, Vector3 cameraForward, Vector3 cameraUp, Vector3 cameraRight) {
-        Vector3[] transformedCorners = new Vector3[corners.length];
-        for (int i = 0; i < corners.length; i++) {
-            transformedCorners[i] = corners[i]
-                    .add(position)
-                    .transform(cameraPosition, cameraForward, cameraUp, cameraRight);
-        }
-        return transformedCorners;
+        return tMin;
     }
 
     @Override
